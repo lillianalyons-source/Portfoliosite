@@ -1828,15 +1828,18 @@
 
   const checkboxes = document.querySelectorAll('.filter-option input');
 
-  // Shuffle tile order on every visit
+  // Shuffle tile order on every visit — Free Magic always stays pinned first
   (function shuffleTiles(){
     const grid = document.getElementById('grid');
     const tileEls = Array.from(grid.querySelectorAll('.tile'));
-    for (let i = tileEls.length - 1; i > 0; i--) {
+    const pinned = tileEls.find(t => t.dataset.project === 'freemagic');
+    const rest = tileEls.filter(t => t.dataset.project !== 'freemagic');
+    for (let i = rest.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [tileEls[i], tileEls[j]] = [tileEls[j], tileEls[i]];
+      [rest[i], rest[j]] = [rest[j], rest[i]];
     }
-    tileEls.forEach(t => grid.appendChild(t));
+    const ordered = pinned ? [pinned, ...rest] : rest;
+    ordered.forEach(t => grid.appendChild(t));
   })();
 
   const tiles = document.querySelectorAll('.tile');
@@ -1860,12 +1863,22 @@
   const logoHome = document.getElementById('logoHome');
   const allProjectPages = document.querySelectorAll('.project-page');
 
+  function stopAllMedia(){
+    document.querySelectorAll('.project-page.active iframe').forEach(f => {
+      const src = f.src;
+      f.src = '';
+      f.src = src;
+    });
+  }
   function goToProject(id){
+    stopAllMedia();
     homeView.classList.add('hidden');
+    allProjectPages.forEach(p => p.classList.remove('active'));
     document.getElementById('project-' + id).classList.add('active');
     window.scrollTo(0,0);
   }
   function goHome(){
+    stopAllMedia();
     allProjectPages.forEach(p => p.classList.remove('active'));
     homeView.classList.remove('hidden');
     window.scrollTo(0,0);
