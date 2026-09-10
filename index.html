@@ -1876,12 +1876,14 @@
     allProjectPages.forEach(p => p.classList.remove('active'));
     document.getElementById('project-' + id).classList.add('active');
     window.scrollTo(0,0);
+    window.goatcounter?.count({ path: '/project/' + id, title: id, event: false });
   }
   function goHome(){
     stopAllMedia();
     allProjectPages.forEach(p => p.classList.remove('active'));
     homeView.classList.remove('hidden');
     window.scrollTo(0,0);
+    window.goatcounter?.count({ path: '/', title: 'Home', event: false });
   }
   document.querySelectorAll('.tile').forEach(tile => {
     tile.addEventListener('click', (e) => {
